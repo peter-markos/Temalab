@@ -22,10 +22,13 @@ module Top_module(
 	input clk,
 	input rstbt,
 	input [2:0] bt,
-	output [8:0] aio
+	output [8:0] ao,
+	output [6:0] bo,
+	input bi
     );
 	 
 	 VGA VGA(.clk(clk), .rst(~rstbt), .bt(bt), .io(aio));
+	 Accel Accel(.clk(clk), .miso(bi), .out(bo));
 
 
 endmodule
