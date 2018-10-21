@@ -3,7 +3,7 @@
 module Accel(
 	input clk,
 	input miso,
-	output [6:0] out,
+	output [6:0] out
     );
 
 assign out[0] = 0;	// ~CS
