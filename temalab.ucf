@@ -23,6 +23,20 @@ NET aio<0> LOC=P143 | IOSTANDARD=LVCMOS33 | DRIVE=8 | SLEW=FAST;
 #NET bo<1> LOC=P100 | IOSTANDARD=LVCMOS33; # MOSI
 #NET bo<0> LOC=P102 | IOSTANDARD=LVCMOS33; # ~CS
 
+//************ Lábkiosztás az új áramkörrel
+#NET bo<3>  LOC=P93  | PULLUP | IOSTANDARD=LVCMOS33; # Diff. 4P  //4 SCLK FPGA 11es lába
+#NET bo<1>   LOC=P100 | PULLUP | IOSTANDARD=LVCMOS33; # Diff. 2P  //2 MOSI FPGA 7es lába
+#NET bo<0>   LOC=P102 | PULLUP | IOSTANDARD=LVCMOS33; # Diff. 1P  //1 ~CS FPGA 5ös lába
+//PMOD 6,12 lábaira FPGA 3-as lába VCC
+//PMOD 5,11 lábai földön
+
+//Ez a 3 hátha kell a többi használatlant kiszedtem
+#NET bo<6>   LOC=P98  | PULLUP | IOSTANDARD=LVCMOS33; # Diff. 3P  //3 MISO FPGA 9es lába
+#NET bo<5>   LOC=P99  | PULLUP | IOSTANDARD=LVCMOS33; # Diff. 2N  //8 IT2 FPGA 8as lába
+#NET bo<4>   LOC=P101 | PULLUP | IOSTANDARD=LVCMOS33; # Diff. 1N  //7 IT1 FPGA 6os lába
+//************
+
+
 #NET bi LOC=P98 | IOSTANDARD=LVCMOS33;  # MISO
 
 NET mem_addr<0> LOC=P45 | IOSTANDARD=LVTTL | DRIVE=8 | SLEW=FAST;
