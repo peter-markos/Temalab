@@ -1,0 +1,192 @@
+`timescale 1ns / 1ps
+
+/******************************************/
+/*          Memória író modul             */
+/******************************************/
+
+module Colour(
+	input clk,						// 50 Mhz-es rendszer órajel
+	input rst,						// Resetelhető
+	input write,					// Írási tartomány jelzésére
+	output [5:0] mem_data,		// Az aktuális adat, ami megy az SRAM-ra írásra
+	
+	input over
+	);
+	
+	reg [5:0] data;
+	
+	reg [9:0] ver_cntr = 10'd1;	// vertiálisan, a sorok számlálásáért (600 sor => 10 bit)
+	reg [6:0] hor_cntr = 7'd1;		// horizontálisan, az oszlopok számlálásáért (100 oszlop => 7 bit)
+	 
+	always @ (posedge clk)
+	begin
+		if (rst || ~(write)) begin			// Resetre és nem írási tartományban reseteljük a horizontális számlálót
+			hor_cntr <= 7'd1;
+			if (rst) ver_cntr <= 10'd1;	// Vertikálisat csak resetre (minden soron belül többször kilépünk írási tartományból)
+		end
+		else begin
+			if (hor_cntr == 7'd101)												// Ha a sor végére értünk...
+				if (ver_cntr != 10'd600) ver_cntr <= ver_cntr + 1'b1;	// És nem az utolsó sorban vagyunk, megyünk tovább
+				else ver_cntr <= 10'd1;											// Egyébként újraindítjuk
+			else
+				hor_cntr <= hor_cntr + 1'b1;									// Egyébként továbblépünk a soron belül
+		end
+	end
+	
+	always @ (*)		// Kirajzolások
+	begin
+		if (over) data <= 000011;
+		else begin
+			
+			//---------------------1------------------
+			if((hor_cntr >= 10'd0) && (hor_cntr <= 10'd25))
+			
+					if((ver_cntr >= 10'd0) && (ver_cntr <= 10'd35)) //1
+						data <= 6'b000000;
+					else if((ver_cntr >= 10'd35) && (ver_cntr <= 10'd70)) //2
+						data <= 6'b000001;
+					else if((ver_cntr >= 10'd70) && (ver_cntr <= 10'd105)) //3
+						data <= 6'b000010;
+					else if((ver_cntr >= 10'd105) && (ver_cntr <= 10'd140)) //4
+						data <= 6'b000011;
+					else if((ver_cntr >= 10'd140) && (ver_cntr <= 10'd185))  //5
+						data <= 6'b000100;
+					else if((ver_cntr >= 10'd175) && (ver_cntr <= 10'd210))  //6
+						data <= 6'b000101;
+					else if((ver_cntr >= 10'd210) && (ver_cntr <= 10'd245))  //7
+						data <= 6'b000110;
+					else if((ver_cntr >= 10'd245) && (ver_cntr <= 10'd280))  //8
+						data <= 6'b000111;
+					else if((ver_cntr >= 10'd280) && (ver_cntr <= 10'd315))  //9
+						data <= 6'b001000;
+					else if((ver_cntr >= 10'd315) && (ver_cntr <= 10'd350))  //10
+						data <= 6'b001001;
+					else if((ver_cntr >= 10'd350) && (ver_cntr <= 10'd385))  //11
+						data <= 6'b001010;
+					else if((ver_cntr >= 10'd385) && (ver_cntr <= 10'd420))  //12
+						data <= 6'b001011;
+					else if((ver_cntr >= 10'd420) && (ver_cntr <= 10'd455))  //13
+						data <= 6'b001100;
+					else if((ver_cntr >= 10'd455) && (ver_cntr <= 10'd490))  //14
+						data <= 6'b001101;
+					else if((ver_cntr >= 10'd490) && (ver_cntr <= 10'd525))  //15
+						data <= 6'b001110;
+					else
+						data <= 6'b001111;
+						
+						
+			//----------------------2----------------	
+			else if((hor_cntr >= 10'd25) && (hor_cntr <= 10'd50))
+			
+					if((ver_cntr >= 10'd0) && (ver_cntr <= 10'd35)) //1
+						data <= 6'b010000;
+					else if((ver_cntr >= 10'd35) && (ver_cntr <= 10'd70)) //2
+						data <= 6'b010001;
+					else if((ver_cntr >= 10'd70) && (ver_cntr <= 10'd105)) //3
+						data <= 6'b010010;
+					else if((ver_cntr >= 10'd105) && (ver_cntr <= 10'd140)) //4
+						data <= 6'b010011;
+					else if((ver_cntr >= 10'd140) && (ver_cntr <= 10'd185))  //5
+						data <= 6'b010100;
+					else if((ver_cntr >= 10'd175) && (ver_cntr <= 10'd210))  //6
+						data <= 6'b010101;
+					else if((ver_cntr >= 10'd210) && (ver_cntr <= 10'd245))  //7
+						data <= 6'b010110;
+					else if((ver_cntr >= 10'd245) && (ver_cntr <= 10'd280))  //8
+						data <= 6'b010111;
+					else if((ver_cntr >= 10'd280) && (ver_cntr <= 10'd315))  //9
+						data <= 6'b011000;
+					else if((ver_cntr >= 10'd315) && (ver_cntr <= 10'd350))  //10
+						data <= 6'b011001;
+					else if((ver_cntr >= 10'd350) && (ver_cntr <= 10'd385))  //11
+						data <= 6'b011010;
+					else if((ver_cntr >= 10'd385) && (ver_cntr <= 10'd410))  //12
+						data <= 6'b011011;
+					else if((ver_cntr >= 10'd420) && (ver_cntr <= 10'd455))  //13
+						data <= 6'b011100;
+					else if((ver_cntr >= 10'd455) && (ver_cntr <= 10'd480))  //14
+						data <= 6'b011101;
+					else if((ver_cntr >= 10'd490) && (ver_cntr <= 10'd525))  //15
+						data <= 6'b011110;
+					else
+						data <= 6'b011111;
+						
+			//-----------------3--------------------------			
+			else if((hor_cntr >= 10'd50) && (hor_cntr <= 10'd75))
+			
+					if((ver_cntr >= 10'd0) && (ver_cntr <= 10'd35)) //1
+						data <= 6'b100000;
+					else if((ver_cntr >= 10'd35) && (ver_cntr <= 10'd70)) //2
+						data <= 6'b100001;
+					else if((ver_cntr >= 10'd70) && (ver_cntr <= 10'd105)) //3
+						data <= 6'b100010;
+					else if((ver_cntr >= 10'd105) && (ver_cntr <= 10'd140)) //4
+						data <= 6'b100011;
+					else if((ver_cntr >= 10'd140) && (ver_cntr <= 10'd185)) //5
+						data <= 6'b100100;
+					else if((ver_cntr >= 10'd175) && (ver_cntr <= 10'd210))  //6
+						data <= 6'b100101;
+					else if((ver_cntr >= 10'd210) && (ver_cntr <= 10'd245))  //7
+						data <= 6'b100110;
+					else if((ver_cntr >= 10'd245) && (ver_cntr <= 10'd280))  //8
+						data <= 6'b100111;
+					else if((ver_cntr >= 10'd280) && (ver_cntr <= 10'd315))  //9
+						data <= 6'b101000;
+					else if((ver_cntr >= 10'd315) && (ver_cntr <= 10'd350))  //10
+						data <= 6'b101001;
+					else if((ver_cntr >= 10'd350) && (ver_cntr <= 10'd385))  //11
+						data <= 6'b101010;
+					else if((ver_cntr >= 10'd385) && (ver_cntr <= 10'd420))  //12
+						data <= 6'b101011;
+					else if((ver_cntr >= 10'd420) && (ver_cntr <= 10'd455))  //13
+						data <= 6'b101100;
+					else if((ver_cntr >= 10'd455) && (ver_cntr <= 10'd490))  //14
+						data <= 6'b101101;
+					else if((ver_cntr >= 10'd490) && (ver_cntr <= 10'd525))  //15
+						data <= 6'b101110;
+					else
+						data <= 6'b101111;
+						
+						
+			//------------------4--------------------------	
+			else //if((hor_cntr >= 10'd75) && (hor_cntr <= 10'd100))
+			
+					if((ver_cntr >= 10'd0) && (ver_cntr <= 10'd35)) //1
+						data <= 6'b110000;
+					else if((ver_cntr >= 10'd35) && (ver_cntr <= 10'd70)) //2
+						data <= 6'b110001;
+					else if((ver_cntr >= 10'd70) && (ver_cntr <= 10'd105)) //3
+						data <= 6'b110010;
+					else if((ver_cntr >= 10'd105) && (ver_cntr <= 10'd140)) //4
+						data <= 6'b110011;
+					else if((ver_cntr >= 10'd140) && (ver_cntr <= 10'd185))  //5
+						data <= 6'b110100;
+					else if((ver_cntr >= 10'd175) && (ver_cntr <= 10'd210))  //6
+						data <= 6'b110101;
+					else if((ver_cntr >= 10'd210) && (ver_cntr <= 10'd245))  //7
+						data <= 6'b110110;
+					else if((ver_cntr >= 10'd245) && (ver_cntr <= 10'd280))  //8
+						data <= 6'b110111;
+					else if((ver_cntr >= 10'd280) && (ver_cntr <= 10'd315))  //9
+						data <= 6'b111000;
+					else if((ver_cntr >= 10'd315) && (ver_cntr <= 10'd350))  //10
+						data <= 6'b111001;
+					else if((ver_cntr >= 10'd350) && (ver_cntr <= 10'd385))  //11
+						data <= 6'b111010;
+					else if((ver_cntr >= 10'd385) && (ver_cntr <= 10'd420))  //12
+						data <= 6'b111011;
+					else if((ver_cntr >= 10'd420) && (ver_cntr <= 10'd455))  //13
+						data <= 6'b111100;
+					else if((ver_cntr >= 10'd455) && (ver_cntr <= 10'd480))  //14
+						data <= 6'b111101;
+					else if((ver_cntr >= 10'd480) && (ver_cntr <= 10'd525))  //14
+						data <= 6'b111110;
+					else 
+						data <= 6'b111111;
+		end			
+	end
+	
+	// Csak írás közben hajtjuk meg az adatvonalat, hogy az olvasást ne zavarjuk
+	assign mem_data = write ? data : 6'bzzzzzz;
+
+endmodule
