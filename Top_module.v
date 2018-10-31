@@ -43,24 +43,92 @@ module Top_module(
 		);
 	 //Accel Accel(.clk(clk), .miso(bi), .out(bo));
 	 
-	 wire [6:0] hor_ball;
-	 wire [9:0] ver_ball;
+	 wire [6:0] ball_hor;
+	 wire [9:0] ball_ver;
+	 
+	 wire [9:0] platform0_ver;
+	 wire [6:0] platform0_hor;
+	 wire [5:0] platform0_width;
+	 
+	 wire [9:0] platform1_ver;
+	 wire [6:0] platform1_hor;
+	 wire [5:0] platform1_width;
+	 
+	 wire [9:0] platform2_ver;
+	 wire [6:0] platform2_hor;
+	 wire [5:0] platform2_width;
+	 
+	 wire [6:0] platform3_ver;
+	 wire [6:0] platform3_hor;
+	 wire [5:0] platform3_width;
+	 
+	 wire [9:0] out_platform_ver;
+	 wire [6:0] out_platform_hor;
+	 wire [5:0] out_platform_width;
+	 
+	 wire over;
 	 
 	 SRAM_256kx16 SRAM_256kx16(
 		.clk(clk),
 		.rst(~rstbt),
 		.write(write),
 		.mem_data(mem_data),
-		.hor_ball(hor_ball),
-		.ver_ball(ver_ball)
+		
+		.ball_hor(ball_hor),
+		.ball_ver(ball_ver),
+		
+		.platform0_ver(platform0_ver),
+		.platform0_hor(platform0_hor),
+		.platform0_width(platform0_width),
+		
+		.platform1_ver(platform1_ver),
+		.platform1_hor(platform1_hor),
+		.platform1_width(platform1_width),
+		
+		.platform2_ver(platform2_ver),
+		.platform2_hor(platform2_hor),
+		.platform2_width(platform2_width),
+		
+		.platform3_ver(platform3_ver),
+		.platform3_hor(platform3_hor),
+		.platform3_width(platform3_width),
+		
+		.out_platform_ver(out_platform_ver),
+		.out_platform_hor(out_platform_hor),
+		.out_platform_width(out_platform_width),
+		
+		.over(over)
 		);
 		
 	 ball_movement ball(
 		.clk(clk),
 		.rst(~rstbt),
 		.btn(bt),
-		.ver_pos(ver_ball),
-		.hor_pos(hor_ball)
+		
+		.ball_ver(ball_ver),
+		.ball_hor(ball_hor),
+		
+		.platform0_ver(platform0_ver),
+		.platform0_hor(platform0_hor),
+		.platform0_width(platform0_width),
+		
+		.platform1_ver(platform1_ver),
+		.platform1_hor(platform1_hor),
+		.platform1_width(platform1_width),
+		
+		.platform2_ver(platform2_ver),
+		.platform2_hor(platform2_hor),
+		.platform2_width(platform2_width),
+		
+		.platform3_ver(platform3_ver),
+		.platform3_hor(platform3_hor),
+		.platform3_width(platform3_width),
+		
+		.out_platform_ver(out_platform_ver),
+		.out_platform_hor(out_platform_hor),
+		.out_platform_width(out_platform_width),
+		
+		.over(over)
 		);
 
 
