@@ -1,0 +1,37 @@
+#NET clk LOC=P55;
+
+#NET "clk" TNM_NET = clk;
+#TIMESPEC TS_clk = PERIOD "clk" 20 ns HIGH 50%;
+
+#NET rstbt LOC=P67 | PULLUP;
+
+#NET bo<2> LOC=P92 | IOSTANDARD=LVCMOS33;  # SCLK
+#NET bo<1> LOC=P99 | IOSTANDARD=LVCMOS33; # MOSI
+#NET bo<0> LOC=P101 | IOSTANDARD=LVCMOS33; # ~CS
+
+#NET bi LOC=P97 | IOSTANDARD=LVCMOS33;  # MISO
+
+#*******************************************************************
+
+NET clk LOC="P56";
+
+NET rstbt LOC="P41";
+
+NET bo<2> LOC="P131" | IOSTANDARD=LVCMOS33;  # SCLK
+NET bo<1> LOC="P124" | IOSTANDARD=LVCMOS33; # MOSI
+NET bo<0> LOC="P122" | IOSTANDARD=LVCMOS33; # ~CS
+
+NET bi LOC="P126" | IOSTANDARD=LVCMOS33;  # MISO
+
+NET "ld<7>" LOC = "P43";
+NET "ld<6>" LOC = "P50";
+NET "ld<5>" LOC = "P51";
+NET "ld<4>" LOC = "P52";
+NET "ld<3>" LOC = "P53";
+NET "ld<2>" LOC = "P54";
+NET "ld<1>" LOC = "P58";
+NET "ld<0>" LOC = "P59"; 
+
+NET "bt<2>" LOC = "P24";
+NET "bt<1>" LOC = "P36";
+NET "bt<0>" LOC = "P38"; 
