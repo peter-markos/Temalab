@@ -13,27 +13,34 @@ module SRAM_256kx16(
 	input [6:0] ball_hor,		// A labda középpontjának horizontális pozíciója (x)
 	input [9:0] ball_ver,		// A labda középpontjának vertikális pozíciója (y)
 	
-	input [9:0] platform0_ver,
+	// 4 db platform:
+	// platform_ver: platform tetejének középpontjának vertikális pozíciója (y)
+	// platform_hor: platform tetejének középpontjának horizontális pozíciója (x)
+	// platform_width: platform szélessége
+	
+	input [7:0] platform0_ver,
 	input [6:0] platform0_hor,
 	input [5:0] platform0_width,
 	
-	input [9:0] platform1_ver,
+	input [6:0] platform1_ver,
 	input [6:0] platform1_hor,
-	input [5:0] platform1_width,
+	input [4:0] platform1_width,
 	
-	input [9:0] platform2_ver,
+	input [5:0] platform2_ver,
 	input [6:0] platform2_hor,
-	input [5:0] platform2_width,
+	input [4:0] platform2_width,
 	
-	input [6:0] platform3_ver,
+	input [4:0] platform3_ver,
 	input [6:0] platform3_hor,
-	input [5:0] platform3_width,
+	input [4:0] platform3_width,
 	
-	input [9:0] out_platform_ver,
+	// A képrõl kilépõ platform:
+	
+	input [7:0] out_platform_ver,
 	input [6:0] out_platform_hor,
 	input [5:0] out_platform_width,
 	
-	input over
+	input over					// Játék vége 
 	);
 	
 	reg [5:0] data;
@@ -56,30 +63,31 @@ module SRAM_256kx16(
 		end
 	end
 	
-	always @ (*)		// Kirajzolások
+	always @ (*)		// Pályarajzolás
 	begin
-		if (over) data <= 000011;
+		if (over) data <= 000001;	// Játékvégi piros kijelzõ
 		else begin
-			if ((ver_cntr >= 10'd0) && (ver_cntr <= 10'd39) && (hor_cntr >= 7'd6) && (hor_cntr <= 7'd96))
+			// Fekete háttér az eredményjelzõnek
+			if ((ver_cntr >= 1'd0) && (ver_cntr <= 6'd39) && (hor_cntr >= 3'd6) && (hor_cntr <= 7'd96))
 				data <= 6'b000000;
 			// A zöld platformok
-			else if (((ver_cntr >= out_platform_ver) && (ver_cntr <= out_platform_ver + 10'd19) && (hor_cntr > out_platform_hor - out_platform_width) && (hor_cntr <= out_platform_hor + out_platform_width + 1'b1)) ||
-						((ver_cntr >= platform0_ver) && (ver_cntr <= platform0_ver + 10'd19) && (hor_cntr > platform0_hor - platform0_width) && (hor_cntr <= platform0_hor + platform0_width + 1'b1)) ||
-						((ver_cntr >= platform1_ver) && (ver_cntr <= platform1_ver + 10'd19) && (hor_cntr > platform1_hor - platform1_width) && (hor_cntr <= platform1_hor + platform1_width + 1'b1)) ||
-						((ver_cntr >= platform2_ver) && (ver_cntr <= platform2_ver + 10'd19) && (hor_cntr > platform2_hor - platform2_width) && (hor_cntr <= platform2_hor + platform2_width + 1'b1)) ||
-						((ver_cntr >= platform3_ver) && (ver_cntr <= platform3_ver + 7'd19) && (hor_cntr > platform3_hor - platform2_width) && (hor_cntr <= platform3_hor + platform3_width + 1'b1)))
+			else if (((ver_cntr >= {out_platform_ver, 2'b00}) && (ver_cntr <= {out_platform_ver, 2'b00} + 5'd19) && (hor_cntr >= out_platform_hor - out_platform_width) && (hor_cntr <= out_platform_hor + out_platform_width)) ||
+						((ver_cntr >= {platform0_ver, 2'b00}) && (ver_cntr <= {platform0_ver, 2'b00} + 5'd19) && (hor_cntr >= platform0_hor - platform0_width) && (hor_cntr <= platform0_hor + platform0_width)) ||
+						((ver_cntr >= {platform1_ver, 2'b00}) && (ver_cntr <= {platform1_ver, 2'b00} + 5'd19) && (hor_cntr >= platform1_hor - platform1_width) && (hor_cntr <= platform1_hor + platform1_width)) ||
+						((ver_cntr >= {platform2_ver, 2'b00}) && (ver_cntr <= {platform2_ver, 2'b00} + 5'd19) && (hor_cntr >= platform2_hor - platform2_width) && (hor_cntr <= platform2_hor + platform2_width)) ||
+						((ver_cntr >= {platform3_ver, 2'b00}) && (ver_cntr <= {platform3_ver, 2'b00} + 5'd19) && (hor_cntr >= platform3_hor - platform2_width) && (hor_cntr <= platform3_hor + platform3_width)))
 				data <= 6'b001100;
 			// A piros labda
-			else if (((ver_cntr > ball_ver-10'd20) && (ver_cntr <= ball_ver-10'd16) && (hor_cntr > ball_hor-7'd1) && (hor_cntr <= ball_hor+7'd2)) || 
-						((ver_cntr > ball_ver-10'd16) && (ver_cntr <= ball_ver-10'd8)  && (hor_cntr > ball_hor-7'd3) && (hor_cntr <= ball_hor+7'd4)) ||
-						((ver_cntr > ball_ver-10'd8)  && (ver_cntr <= ball_ver+10'd8)  && (hor_cntr > ball_hor-7'd4) && (hor_cntr <= ball_hor+7'd5)) ||
-						((ver_cntr > ball_ver+10'd8)  && (ver_cntr <= ball_ver+10'd16) && (hor_cntr > ball_hor-7'd3) && (hor_cntr <= ball_hor+7'd4)) ||
-						((ver_cntr > ball_ver+10'd16) && (ver_cntr <= ball_ver+10'd20) && (hor_cntr > ball_hor-7'd1) && (hor_cntr <= ball_hor+7'd2)))	
+			else if (((ver_cntr > ball_ver-5'd20) && (ver_cntr <= ball_ver-5'd16) && (hor_cntr >= ball_hor-1'd1) && (hor_cntr <= ball_hor+1'd1)) || 
+						((ver_cntr > ball_ver-5'd16) && (ver_cntr <= ball_ver-4'd8)  && (hor_cntr >= ball_hor-2'd3) && (hor_cntr <= ball_hor+2'd3)) ||
+						((ver_cntr > ball_ver-4'd8)  && (ver_cntr <= ball_ver+4'd8)  && (hor_cntr >= ball_hor-3'd4) && (hor_cntr <= ball_hor+3'd4)) ||
+						((ver_cntr > ball_ver+4'd8)  && (ver_cntr <= ball_ver+5'd16) && (hor_cntr >= ball_hor-2'd3) && (hor_cntr <= ball_hor+2'd3)) ||
+						((ver_cntr > ball_ver+5'd16) && (ver_cntr <= ball_ver+5'd20) && (hor_cntr >= ball_hor-1'd1) && (hor_cntr <= ball_hor+1'd1)))	
 				data <= 6'b000011;
 			// kék háttér
 			else
 				data <= 6'b110100;
-		end
+		end	
 	end
 	
 	// Csak írás közben hajtjuk meg az adatvonalat, hogy az olvasást ne zavarjuk

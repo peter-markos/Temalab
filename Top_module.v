@@ -2,13 +2,12 @@
 
 module Top_module(
 	input clk,					// 50 MHz-es rendszer órajel
-	input rstbt,
+	input rstbt,				// Reset
+	
 	output [8:0] aio,			// VGA port
 	
-	input [1:0] bt,
-	
-	//output [6:0] bo,		// Accelorometer kimeneti port
-	//input bi,					// Accelorometer bemeneti port
+	output [2:0] bo,			// Accelorometer kimeneti portjai: 2-SCLK, 1-MOSI, 0-nCS
+	input bi,					// Accelorometer bemeneti portja: MISO
 	
 	output [17:0] mem_addr,	// 256k-s SRAM címbbitjei
 	inout [5:0] mem_data,	// Csak az alsó 6 adatbitet használjuk (3*2 rgb-bit)
@@ -19,14 +18,15 @@ module Top_module(
 	output sdram_csn			// SDRAM engedélyezõ
     );
 	 
-	 assign sdram_csn = 1;		// Az SRAM használata alatt a SDRAM-ot tiltani kell
+	 assign sdram_csn = 1;	// Az SRAM használata alatt a SDRAM-ot tiltani kell
 	 
-	 wire [6:0] hor_addr;
-	 wire [7:0] ver_addr;
-	 wire read;
-	 wire write;
-	 assign mem_addr = {5'b0, ver_addr, hor_addr};
-	 assign mem_wen = ~write;
+	 wire [7:0] ver_addr;	// Megadja hányadik sorban vagyunk (0-150)
+	 wire [6:0] hor_addr;	// Megadja hányadik sorban vagyunk (0-100)
+	 wire read;					// Memóriolvasás jelzése
+	 wire write;				// Memóriírás jelzése
+	 
+	 assign mem_addr = {5'b0, ver_addr, hor_addr};	// A képernyõ koordinátákból képezzük a memóriacímeket
+	 assign mem_wen = ~write;								// A megfelelõ memóriavezérlõk engedélyezése
 	 assign mem_lbn = ~(read || write);
 	 assign sram_csn = ~(read || write);
 	 assign sram_oen = ~(read || write);
@@ -41,32 +41,36 @@ module Top_module(
 		.read(read),
 		.write(write)
 		);
-	 //Accel Accel(.clk(clk), .miso(bi), .out(bo));
 	 
 	 wire [6:0] ball_hor;
 	 wire [9:0] ball_ver;
 	 
-	 wire [9:0] platform0_ver;
+	 wire [7:0] platform0_ver;
 	 wire [6:0] platform0_hor;
 	 wire [5:0] platform0_width;
 	 
-	 wire [9:0] platform1_ver;
+	 wire [6:0] platform1_ver;
 	 wire [6:0] platform1_hor;
-	 wire [5:0] platform1_width;
+	 wire [4:0] platform1_width;
 	 
-	 wire [9:0] platform2_ver;
+	 wire [5:0] platform2_ver;
 	 wire [6:0] platform2_hor;
-	 wire [5:0] platform2_width;
+	 wire [4:0] platform2_width;
 	 
-	 wire [6:0] platform3_ver;
+	 wire [4:0] platform3_ver;
 	 wire [6:0] platform3_hor;
-	 wire [5:0] platform3_width;
+	 wire [4:0] platform3_width;
 	 
-	 wire [9:0] out_platform_ver;
+	 wire [7:0] out_platform_ver;
 	 wire [6:0] out_platform_hor;
 	 wire [5:0] out_platform_width;
 	 
+	 wire right;
+	 wire left;
+	 wire middle;
+	 
 	 wire over;
+	 //wire [19:0] score;
 	 
 	 SRAM_256kx16 SRAM_256kx16(
 		.clk(clk),
@@ -100,10 +104,25 @@ module Top_module(
 		.over(over)
 		);
 		
+	 Accelo Accelo(
+		.clk(clk),
+		.rst(~rstbt),
+		
+		.bo(bo),
+		.bi(bi),
+		
+		.right(right),
+		.left(left),
+		.middle(middle)
+		);
+		
 	 ball_movement ball(
 		.clk(clk),
 		.rst(~rstbt),
-		.btn(bt),
+		
+		.right(right),
+		.left(left),
+		.middle(middle),
 		
 		.ball_ver(ball_ver),
 		.ball_hor(ball_hor),
@@ -128,6 +147,7 @@ module Top_module(
 		.out_platform_hor(out_platform_hor),
 		.out_platform_width(out_platform_width),
 		
+		//.score(score)
 		.over(over)
 		);
 

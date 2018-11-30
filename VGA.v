@@ -57,7 +57,7 @@ module VGA(
 	 assign write = ((ver_cntr >= 10'd1) && (ver_cntr <= 10'd600) &&
 						  (hor_cntr >= 11'd690) && (hor_cntr <= 11'd790));
 	 
-	 assign io[0] = 0;								// PWM audio
+	 assign io[0] = 1'b0;							// PWM audio
 	 assign io[1] = visible && data[0];			// VGA piros jel (1.bit)	
 	 assign io[2] = visible && data[1];			// VGA piros jel (0.bit)
 	 assign io[3] = visible && data[2];			// VGA zöld jel (1.bit)
